@@ -1,34 +1,46 @@
 import streamlit as st
 import pandas as pd
+import plotly.graph_objects as go
 
-# タイトルの設定
-st.header('レッスン4: データ入力と表示')
-
-# テキスト入力
-name = st.text_input('あなたの名前を入力してください')
-if name:
-    st.write(f'こんにちは、{name}さん！')
-
-# 数値入力
-age = st.number_input('あなたの年齢を入力してください', min_value=0, max_value=120, value=20)
-st.write(f'あなたは{age}歳です。')
-
-# 日付入力
-date = st.date_input('日付を選択してください')
-st.write(f'選択された日付: {date}')
+st.header('レッスン5: 折れ線グラフ(plotly,go)の作成')
 
 # サンプルデータの作成
 data = {
-    '名前': ['太郎', '花子', '一郎'],
-    '年齢': [25, 30, 35],
-    '都市': ['東京', '大阪', '福岡']
+    '月': ['1月', '2月', '3月', '4月', '5月', '6月'],
+    '売上': [100, 120, 140, 180, 200, 210],
+    '利益': [20, 25, 30, 40, 50, 55]
 }
 df = pd.DataFrame(data)
 
-# データフレームの表示
-st.subheader('データフレームの表示')
+st.write('サンプルデータ:')
 st.dataframe(df)
 
-# 表の表示
-st.subheader('表の表示')
-st.table(df)
+# 基本的な折れ線グラフの作成
+fig = go.Figure()
+fig.add_trace(go.Scatter(x=df['月'], y=df['売上'], mode='lines+markers', name='売上'))
+fig.add_trace(go.Scatter(x=df['月'], y=df['利益'], mode='lines+markers', name='利益'))
+
+fig.update_layout(title='月別売上と利益',
+                  xaxis_title='月',
+                  yaxis_title='金額（万円）')
+
+st.plotly_chart(fig)
+
+# カスタマイズされた折れ線グラフの作成
+fig = go.Figure()
+fig.add_trace(go.Scatter(x=df['月'], y=df['売上'], mode='lines+markers', name='売上', line=dict(color='blue', width=2)))
+fig.add_trace(go.Scatter(x=df['月'], y=df['利益'], mode='lines+markers', name='利益', line=dict(color='red', width=2)))
+
+fig.update_layout(
+    title='月別売上と利益の推移',
+    xaxis_title='月',
+    yaxis_title='金額（万円）',
+    font=dict(family="Meiryo", size=12),
+    legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+    hovermode="x unified"
+)
+
+fig.update_xaxes(tickangle=45)
+fig.update_yaxes(zeroline=True, zerolinewidth=2, zerolinecolor='lightgrey')
+
+st.plotly_chart(fig)
